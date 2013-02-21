@@ -62,8 +62,7 @@ func (thread ClientThread) Start(result chan int) {
 		request := Request {Name: fmt.Sprintf("No. %d", i)}
 		fmt.Printf("ClientThread requests %s\n", request)
 		thread.requestQueue.putRequest(request)
-		randDuration, _ := time.ParseDuration(fmt.Sprintf("%d", thread.random.Int63()))
-		time.Sleep(randDuration * time.Millisecond)		
+		time.Sleep(time.Duration(thread.random.Int31()))
 	}
 
 	result <- 1
@@ -78,8 +77,7 @@ func (thread ServerThread) Start(result chan int) {
 	for i := 0; i < 10000; i++ {
 		request := thread.requestQueue.getRequest()
 		fmt.Printf("ServerThread handles %s\n", request)
-		randDuration, _ := time.ParseDuration(fmt.Sprintf("%d", thread.random.Int63()))
-		time.Sleep(randDuration * time.Millisecond)
+		time.Sleep(time.Duration(thread.random.Int31()))
 	}
 	result <- 1
 }
