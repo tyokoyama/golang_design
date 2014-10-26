@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"time"
 )
 
@@ -42,6 +43,7 @@ func(h Host) request(count int, c byte) chan bool {
 }
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	fmt.Printf("main BEGIN\n")
 
 

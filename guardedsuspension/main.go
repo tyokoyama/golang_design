@@ -23,6 +23,7 @@ type RequestQueue struct {
 	cond *sync.Cond
 }
 
+// 構造体のメソッドはinit()でも呼ばれない！
 func (queue *RequestQueue) init() {
 	queue.queue = list.New()
 	var mutex sync.Mutex

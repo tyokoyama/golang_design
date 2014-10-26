@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"time"
+	"runtime"
 )
 
 type Person struct {
@@ -29,6 +30,7 @@ func(t PrintPersonThread) Start() {
 }
 
 func main() {
+	runtime.GOMAXPROCS(2)
 	alice := Person {Name: "Alice", Address: "Alaska"}
 
 	go PrintPersonThread {id: 1, person: alice}.Start()

@@ -4,13 +4,16 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
+	"runtime"
 )
 
 type Gate struct {
 	counter int
 	name string
 	address string
+	ch chan int
 }
 
 func(g *Gate) String() string {
@@ -25,10 +28,13 @@ func(g *Gate) check() {
 }
 
 func(g *Gate) Pass(name, address string) {
+	g.ch <- 0
 	g.counter++
 	g.name = name
 	g.address = address
 	g.check()
+	<- g.ch
+
 }
 
 type UserThread struct {
@@ -41,14 +47,19 @@ func(thread UserThread) Start() {
 	println(fmt.Sprintf("%s BEGIN", thread.myName))
 	for {
 		thread.gate.Pass(thread.myName, thread.myAddress)
-		time.Sleep(1 * time.Millisecond)
+		r := (rand.Int() % 10) + 1
+//		time.Sleep(1 * time.Millisecond)
+		d, _ := time.ParseDuration(fmt.Sprintf("%dms", r))
+		time.Sleep(d)
 	}
 }
 
 func main() {
 	println("Testing Gate, hit CTRL+C to exit.")
+	ch := make(chan int, 1)
+	runtime.GOMAXPROCS(3)
 
-	gate := Gate {counter: 0, name: "Nobody", address: "Nowhere"}
+	gate := Gate {counter: 0, name: "Nobody", address: "Nowhere", ch: ch}
 	alice := UserThread {gate: &gate, myName: "Alice", myAddress: "Alaska"}
 	bobby := UserThread {gate: &gate, myName: "Bobby", myAddress: "Brazil"}
 	chris := UserThread {gate: &gate, myName: "Chris", myAddress: "Canada"}
